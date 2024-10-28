@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Conservar Finder - About{% endblock %}
+
+{% block body %}
+    <div class="container my-4" style="padding-left: 3px;">
+        <h3 class="text-left">How Conservar Finder Works?</h3>
+    </div>
+    <div class="container my-4" style="padding-left: 3px;">
+        <p class="text-align">
+            Conservar Finder analyzes aligned FASTA files to identify conserved and variable regions in protein or nucleotide sequences. By examining each column of the alignment, Conservar Finder classifies positions as either <b>Conserved</b> (if all amino acids or nucleotides in a column are identical) or <b>Variable</b> (if there are differences).
+            Once variable positions are identified, GenBank IDs associated with the variations are retrieved from the uploaded FASTA file. For example, if Tryptophan (W) is replaced by Valine (V) at position 39, it finds the GenBank IDs that have Valine (V) at this position and fetches real-time metadata from <a href="https://www.ncbi.nlm.nih.gov/Web/Search/entrezfs.html">Entrez</a>, including <b>Date of Collection, Location, Strain, Isolate, and Genotype.</b>
+            This data is displayed in a clear, tabular format showing conserved and variable positions alongside respective amino acids and additional metadata. The geographic origins of sequence variations are also marked on a global map, providing a visual overview of variations.
+        </p>
+    </div>
+    <div class="container my-4">
+        <div class="row">
+            <!-- Column for the image -->
+            <div class="d-flex justify-content-center align-items-center">
+                <img src="{{ url_for('static', filename='Input-hz.png') }}" alt="Conservar Finder Workflow" class="img-fluid" style="width: 800px; height: auto;">
+            </div>
+            
+        </div>
+    </div>
+    <div class="container my-4" style="padding-left: 3px;">
+        <h3 class="text-left">How to use Conservar Finder?</h3>
+    </div>
+    <div class="container my-4" style="padding-left: 3px;">
+        <p class="text-align">
+            1. Upload your aligned FASTA file. You can use tools such as <a href = "https://www.ebi.ac.uk/jdispatcher/msa/clustalo">Clustal Omega</a>, <a href = "https://www.ebi.ac.uk/jdispatcher/msa/muscle?stype=protein">MUSCLE</a> , <a href = "https://mafft.cbrc.jp/alignment/server/index.html" >MAFFTT</a> to perform <br> <a href = "https://en.wikipedia.org/wiki/Multiple_sequence_alignment">Multiple Sequence Alignment</a> on your FASTA sequences. 
+            For <a href = "https://en.wikipedia.org/wiki/Sequence_alignment#Pairwise_alignment">Pairwise Alignment</a> you can use <a href = "https://www.ebi.ac.uk/jdispatcher/psa/emboss_needle" >EMBOSS NEEDLE </a>. You can also use <a href = "https://www.jalview.org/">Jalview</a> to edit , visualise and analyse aligned sequences and to save them into .fasta or .fa format.  Make sure that GenBank IDs are present in your input file.<br>
+            2. Mark the checkbox if you want to omit sequences with missing data (X) or gaps (-) from your input file.<br>
+            3. Provide your E-mail ID which necessary to fetch metadata from Entrez.<br>
+            4. Click on "Upload" button.<br>
+            5. You can also download results in .csv format.
+        </p>
+       
+    </div>
+    
+{% endblock body %}
+

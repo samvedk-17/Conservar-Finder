@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_ef6f46d9964e50be9bb2fd51df8f26c1 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_ef6f46d9964e50be9bb2fd51df8f26c1" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_ef6f46d9964e50be9bb2fd51df8f26c1 = L.map(
+                "map_ef6f46d9964e50be9bb2fd51df8f26c1",
+                {
+                    center: [20.0, 0.0],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 2,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_14ef8d836ef809cf3904d6cbb776888b = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e", "detectRetina": false, "maxNativeZoom": 20, "maxZoom": 20, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abcd", "tms": false}
+            );
+        
+    
+            tile_layer_14ef8d836ef809cf3904d6cbb776888b.addTo(map_ef6f46d9964e50be9bb2fd51df8f26c1);
+        
+    
+            var marker_cluster_432ec5a68a05dd6281be6e2f16976d6d = L.markerClusterGroup(
+                {}
+            );
+        
+    
+            var marker_7ee9ce797b9424aa3136be4151b700d7 = L.marker(
+                [1.357107, 103.8194992],
+                {}
+            ).addTo(marker_cluster_432ec5a68a05dd6281be6e2f16976d6d);
+        
+    
+        var popup_b357c668d45bb6583d3959f0af8a7677 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_c46095bb1524c1cd1635dd1a506053e0 = $(`<div id="html_c46095bb1524c1cd1635dd1a506053e0" style="width: 100.0%; height: 100.0%;">         <b>GenBank ID:</b> FJ445474.1<br>         <b>Strain:</b> N/A<br>         <b>Location:</b> Singapore<br>         </div>`)[0];
+                popup_b357c668d45bb6583d3959f0af8a7677.setContent(html_c46095bb1524c1cd1635dd1a506053e0);
+            
+        
+
+        marker_7ee9ce797b9424aa3136be4151b700d7.bindPopup(popup_b357c668d45bb6583d3959f0af8a7677)
+        ;
+
+        
+    
+    
+            marker_7ee9ce797b9424aa3136be4151b700d7.bindTooltip(
+                `<div>
+                     
+        <b>GenBank ID:</b> FJ445474.1<br>
+        <b>Strain:</b> N/A<br>
+        <b>Location:</b> Singapore<br>
+        
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_7785a24f8f8673a8ce54807a44b73b15 = L.marker(
+                [4.6125522, 13.1535811],
+                {}
+            ).addTo(marker_cluster_432ec5a68a05dd6281be6e2f16976d6d);
+        
+    
+        var popup_3008a173c5f6de0834f70764821bb652 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_9517615b750e0a81678970f574cacee7 = $(`<div id="html_9517615b750e0a81678970f574cacee7" style="width: 100.0%; height: 100.0%;">         <b>GenBank ID:</b> KX262996.1<br>         <b>Strain:</b> CHIKV/Homo sapiens/CMR/667/2006<br>         <b>Location:</b> Cameroon<br>         </div>`)[0];
+                popup_3008a173c5f6de0834f70764821bb652.setContent(html_9517615b750e0a81678970f574cacee7);
+            
+        
+
+        marker_7785a24f8f8673a8ce54807a44b73b15.bindPopup(popup_3008a173c5f6de0834f70764821bb652)
+        ;
+
+        
+    
+    
+            marker_7785a24f8f8673a8ce54807a44b73b15.bindTooltip(
+                `<div>
+                     
+        <b>GenBank ID:</b> KX262996.1<br>
+        <b>Strain:</b> CHIKV/Homo sapiens/CMR/667/2006<br>
+        <b>Location:</b> Cameroon<br>
+        
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_abaac1680a66f719a25e89ad632b9fa1 = L.marker(
+                [12.1544035, -86.2737642],
+                {}
+            ).addTo(marker_cluster_432ec5a68a05dd6281be6e2f16976d6d);
+        
+    
+        var popup_25a1093ee2b80b7eaeefb1ee1f9b85fc = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d85228436d79f6ad030f391e067c5deb = $(`<div id="html_d85228436d79f6ad030f391e067c5deb" style="width: 100.0%; height: 100.0%;">         <b>GenBank ID:</b> KY703959.1<br>         <b>Strain:</b> CHIKV/Homo sapiens/NIC/1800.1D/2014<br>         <b>Location:</b> Nicaragua: Managua<br>         </div>`)[0];
+                popup_25a1093ee2b80b7eaeefb1ee1f9b85fc.setContent(html_d85228436d79f6ad030f391e067c5deb);
+            
+        
+
+        marker_abaac1680a66f719a25e89ad632b9fa1.bindPopup(popup_25a1093ee2b80b7eaeefb1ee1f9b85fc)
+        ;
+
+        
+    
+    
+            marker_abaac1680a66f719a25e89ad632b9fa1.bindTooltip(
+                `<div>
+                     
+        <b>GenBank ID:</b> KY703959.1<br>
+        <b>Strain:</b> CHIKV/Homo sapiens/NIC/1800.1D/2014<br>
+        <b>Location:</b> Nicaragua: Managua<br>
+        
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_02677fb7648106eff5723b533bf089b4 = L.marker(
+                [22.3511148, 78.6677428],
+                {}
+            ).addTo(marker_cluster_432ec5a68a05dd6281be6e2f16976d6d);
+        
+    
+        var popup_0b57b0417d3272253ff9532879ac2f82 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b6789ed3e31f87dd38de0b94f7d2f6a2 = $(`<div id="html_b6789ed3e31f87dd38de0b94f7d2f6a2" style="width: 100.0%; height: 100.0%;">         <b>GenBank ID:</b> MK473632.1<br>         <b>Strain:</b> N/A<br>         <b>Location:</b> India<br>         </div>`)[0];
+                popup_0b57b0417d3272253ff9532879ac2f82.setContent(html_b6789ed3e31f87dd38de0b94f7d2f6a2);
+            
+        
+
+        marker_02677fb7648106eff5723b533bf089b4.bindPopup(popup_0b57b0417d3272253ff9532879ac2f82)
+        ;
+
+        
+    
+    
+            marker_02677fb7648106eff5723b533bf089b4.bindTooltip(
+                `<div>
+                     
+        <b>GenBank ID:</b> MK473632.1<br>
+        <b>Strain:</b> N/A<br>
+        <b>Location:</b> India<br>
+        
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_11614f6bfbfab29d5f00cd966b862047 = L.marker(
+                [4.6125522, 13.1535811],
+                {}
+            ).addTo(marker_cluster_432ec5a68a05dd6281be6e2f16976d6d);
+        
+    
+        var popup_f46dc257c11f5bbd4ae46a11e7c8c308 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b342d32d44e479f865b735db82db8b9b = $(`<div id="html_b342d32d44e479f865b735db82db8b9b" style="width: 100.0%; height: 100.0%;">         <b>GenBank ID:</b> MT666071.1<br>         <b>Strain:</b> CAM/2018/Yaounde<br>         <b>Location:</b> Cameroon<br>         </div>`)[0];
+                popup_f46dc257c11f5bbd4ae46a11e7c8c308.setContent(html_b342d32d44e479f865b735db82db8b9b);
+            
+        
+
+        marker_11614f6bfbfab29d5f00cd966b862047.bindPopup(popup_f46dc257c11f5bbd4ae46a11e7c8c308)
+        ;
+
+        
+    
+    
+            marker_11614f6bfbfab29d5f00cd966b862047.bindTooltip(
+                `<div>
+                     
+        <b>GenBank ID:</b> MT666071.1<br>
+        <b>Strain:</b> CAM/2018/Yaounde<br>
+        <b>Location:</b> Cameroon<br>
+        
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_a9d9432392a5d719c52ea0ff75f5ad69 = L.marker(
+                [22.3511148, 78.6677428],
+                {}
+            ).addTo(marker_cluster_432ec5a68a05dd6281be6e2f16976d6d);
+        
+    
+        var popup_dce0c7bed2b5c569c5a293c5dfa5250e = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_2103f981822ab1bbe74a02f6aebec2c4 = $(`<div id="html_2103f981822ab1bbe74a02f6aebec2c4" style="width: 100.0%; height: 100.0%;">         <b>GenBank ID:</b> OQ605454.1<br>         <b>Strain:</b> NIV211807/2021/Belsar/India<br>         <b>Location:</b> India<br>         </div>`)[0];
+                popup_dce0c7bed2b5c569c5a293c5dfa5250e.setContent(html_2103f981822ab1bbe74a02f6aebec2c4);
+            
+        
+
+        marker_a9d9432392a5d719c52ea0ff75f5ad69.bindPopup(popup_dce0c7bed2b5c569c5a293c5dfa5250e)
+        ;
+
+        
+    
+    
+            marker_a9d9432392a5d719c52ea0ff75f5ad69.bindTooltip(
+                `<div>
+                     
+        <b>GenBank ID:</b> OQ605454.1<br>
+        <b>Strain:</b> NIV211807/2021/Belsar/India<br>
+        <b>Location:</b> India<br>
+        
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            marker_cluster_432ec5a68a05dd6281be6e2f16976d6d.addTo(map_ef6f46d9964e50be9bb2fd51df8f26c1);
+        
+</script>
+</html>

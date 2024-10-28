@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block title %}Conservar Finder-Results{% endblock %}
+{% block body %}
+<div class="container my-4 text-center">
+    <h2 style="margin-left: 20px;">Results</h2>
+</div>
+
+<div class="d-flex justify-content-between align-items-center my-3">
+    <h4 style="margin-left: 20px;">Conserved Positions</h4>
+    <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.location.href='/download_consv'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64"/>
+        </svg> 
+        Download
+    </button>
+</div>
+
+
+    {% if conserved %}
+    <table style="border-collapse: collapse; width: 75%; text-align: center; margin-left: 20px; margin-right: 20px;" >
+        <thead>
+            <tr>
+                <!-- First header row for Conserved Position -->
+                <th style="border: 1px solid black; background-color: #a4d5f8; padding: 4px; width: 100%;">Conserved Position</th>
+                {% for pos in conserved %}
+                    <th style="border: 1px solid black; padding: 8px;">{{ pos.split(':')[0] }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <!-- Second header row for Conserved Amino Acid -->
+                <th style="border: 1px solid black; background-color: #a4d5f8; padding:4px;">Conserved Amino Acid</th>
+                {% for pos in conserved %}
+                    <td style="border: 1px solid black; padding: 4px;">{{ pos.split(':')[1].strip() }}</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+    {% else %}
+        <p style = "margin-left: 20px;">No conserved positions found.</p>
+    {% endif %}
+    
+
+
+    <!-- Display Variable Positions -->
+<div class="d-flex justify-content-between align-items-center my-3">
+        <h4 class="text-left" style="margin-left: 20px;">Variable Positions</h4>  
+        <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.location.href='/download_var'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64"/>
+            </svg> 
+            Download
+        </button>
+</div>
+    {% if variable %}
+        <table style="border-collapse: collapse; width: 100%; text-align: center; margin-left: 20px; margin-right: 20px;">
+            <thead>
+                <tr style="background-color: #a4d5f8;">
+                    <th style="border: 1px solid black; padding: 4px;">Variable Position</th>
+                
+                    <th style="border: 1px solid black; padding: 4px;">Variable Amino Acid</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for position, data in variable.items() %}
+                <tr>
+                    <td style="border: 1px solid black; padding: 4px;">{{ position }}</td>
+                    <td style="border: 1px solid black; padding: 4px;">{{ data['amino_acids'] | join(', ') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style = "margin-left: 20px;" >No variable positions found.</p>
+    {% endif %}
+   
+  <!-- Display Metadata for Variable Positions -->
+<div class="d-flex justify-content-between align-items-center my-3">
+    <h4 class="text-left" style="margin-left: 20px;">Metadata for Variable Positions</h4>  
+    <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.location.href='/download_metadata'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64"/>
+        </svg> 
+        Download
+    </button>
+</div>
+
+{% if metadata %}
+<table style="border-collapse: collapse; width: 100%; text-align: center; margin-left: 20px; margin-right: 20px;">
+    <thead>
+        <tr style="background-color: #a4d5f8;">
+            <th style="border: 1px solid black; padding: 8px;">Variable Position</th>
+            <th style="border: 1px solid black; padding: 8px;">Variable Amino Acid</th>
+            <th style="border: 1px solid black; padding: 8px;">GenBank ID</th>
+            <th style="border: 1px solid black; padding: 8px;">Collection Date</th>
+            <th style="border: 1px solid black; padding: 8px;">Location</th>
+            <th style="border: 1px solid black; padding: 8px;">Strain</th>
+            <th style="border: 1px solid black; padding: 8px;">Isolate</th>
+            <th style="border: 1px solid black; padding: 8px;">Genotype</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for data in metadata %}
+        <tr>
+            <td style="border: 1px solid black; padding: 8px;">{{ data['Position'] }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ data['Amino Acids'] }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ data['GenBank ID'] }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ data['Collection Date'] }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ data['Location'] }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ data['Strain'] }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ data['Isolate'] }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ data['Genotype'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="margin-left: 20px;">No Metadata Available.</p>
+{% endif %}
+
+<!-- Display Interactive Map -->
+<div class="d-flex justify-content-between align-items-center my-3">
+    <h4 class="text-left" style="margin-left: 40px;">Geographic Map of Variable Positions</h4>
+</div>
+<div class="container my-3 text-center" style="margin-left: 20px;">
+    {% if metadata and metadata|length > 0 %}
+        <iframe src="{{ url_for('static', filename='map.html') }}" width="100%" height="400px" style="display: block; margin-left: 20px;"></iframe>
+    {% else %}
+    <p style="margin-left: 20px;">Can't display any locations.</p>
+    {% endif %}
+</div>
+
+    <!-- Upload Another File -->
+    <div class="container my-3 text-center" style= "margin-left: 20px;"></div>
+    <a href="{{ url_for('index') }}" style = "margin-left: 20px;" >Upload Another File</a> 
+
+<footer style="text-align: center; margin-top: 20px;">
+    <p>UTC - {{ date }}</p>
+</footer>    
+
+{% endblock body %}
+
+
+
