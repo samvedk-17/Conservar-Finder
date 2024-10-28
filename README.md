@@ -14,3 +14,5 @@ Multiple Sequence Alignment on your FASTA sequences. For Pairwise Alignment you 
 3. Provide your E-mail ID which necessary to fetch metadata from Entrez.
 4. Click on "Upload" button.
 5. You can also download results in .csv format.
+
+Further areas of development: This tool takes a lot of time which increases with the size of dataset to conduct the abovementioned processes. To reduce this, time complexity of the code can be reduced or more flexibility can be provided to user to choose what processes he wants to perform on aligned FASTA files. For e.g. If a user wants only conserved and variable positions then he can mark respective checkboxes. Choice of functions to be performed can be helpful to deal with time complexity issue.
