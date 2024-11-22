@@ -46,12 +46,15 @@
     <!-- Display Variable Positions -->
 <div class="d-flex justify-content-between align-items-center my-3">
         <h4 class="text-left" style="margin-left: 20px;">Variable Positions</h4>  
-        <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.location.href='/download_var'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
-                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64"/>
-            </svg> 
-            Download
-        </button>
+       
+            <!-- Existing Download Button -->
+            <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.location.href='/download_var'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64"/>
+                </svg> 
+                Download
+            </button>
+        
 </div>
     {% if variable %}
         <table style="border-collapse: collapse; width: 100%; text-align: center; margin-left: 20px; margin-right: 20px;">
@@ -63,7 +66,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for position, data in variable.items() %}
+                {% for position, data in variable.items() %} <!-- Only show top 10 rows -->
                 <tr>
                     <td style="border: 1px solid black; padding: 4px;">{{ position }}</td>
                     <td style="border: 1px solid black; padding: 4px;">{{ data['amino_acids'] | join(', ') }}</td>
@@ -71,19 +74,28 @@
                 {% endfor %}
             </tbody>
         </table>
+        <div class="d-flex justify-content-between align-items-center my-3" style="margin-left: 20px;">
+            <!-- Button to open full variable positions table in a new window -->
+            <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.open('/full_variable_positions', '_blank')">
+                Open full table in new window
+            </button>
+        </div>    
     {% else %}
         <p style = "margin-left: 20px;" >No variable positions found.</p>
     {% endif %}
    
   <!-- Display Metadata for Variable Positions -->
 <div class="d-flex justify-content-between align-items-center my-3">
-    <h4 class="text-left" style="margin-left: 20px;">Metadata for Variable Positions</h4>  
-    <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.location.href='/download_metadata'">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64"/>
-        </svg> 
-        Download
-    </button>
+    <h4 class="text-left" style="margin-left: 20px;">Metadata for Variable Positions</h4> 
+   
+        <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.location.href='/download_metadata'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64"/>
+            </svg> 
+            Download
+        </button>
+   
+    
 </div>
 
 {% if metadata %}
@@ -101,7 +113,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for data in metadata %}
+        {% for data in metadata[:10] %} <!-- Only show top 10 rows -->
         <tr>
             <td style="border: 1px solid black; padding: 8px;">{{ data['Position'] }}</td>
             <td style="border: 1px solid black; padding: 8px;">{{ data['Amino Acids'] }}</td>
@@ -115,6 +127,12 @@
         {% endfor %}
     </tbody>
 </table>
+<div class="d-flex justify-content-between align-items-center my-3" style="margin-left: 20px;">
+    <!-- Button to open full metadata in a new window -->
+    <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.open('/full_metadata', '_blank')">
+        Open full table in new window
+    </button>
+</div>     
 {% else %}
 <p style="margin-left: 20px;">No Metadata Available.</p>
 {% endif %}
