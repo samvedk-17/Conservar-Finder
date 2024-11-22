@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 from concurrent.futures import ThreadPoolExecutor
 import io
 from datetime import datetime
+from functools import lru_cache
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -20,7 +21,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 Entrez.email = ''  # User's email for Entrez API
 
 # Optimized function to find conserved and variable positions with parallelized filtering
+@lru_cache(maxsize=32)
 def find_conserved_and_variable_pos(input_fasta, omit_missing):
+    input_fasta = str(input_fasta)
     alignment = AlignIO.read(input_fasta, 'fasta')
     
     with ThreadPoolExecutor() as executor:
@@ -53,8 +56,10 @@ def fetch_genbank_metadata(genbank_ids, email, variable_positions):
     Entrez.email = email
     batch_size = 50
     records_data = []
-    
+
+    @lru_cache(maxsize=512)
     def fetch_batch(ids_batch):
+        ids_batch = tuple(ids_batch)
         handle = Entrez.efetch(db="nucleotide", id=','.join(ids_batch), rettype="gb", retmode="text")
         records = SeqIO.parse(handle, "genbank")
         data_batch = []
@@ -85,15 +90,17 @@ def fetch_genbank_metadata(genbank_ids, email, variable_positions):
 
     with ThreadPoolExecutor() as executor:
         for i in range(0, len(genbank_ids), batch_size):
-            records_data.extend(executor.submit(fetch_batch, genbank_ids[i:i + batch_size]).result())
+            records_data.extend(executor.submit(fetch_batch, tuple(genbank_ids[i:i + batch_size])).result())
 
     return pd.DataFrame(records_data).sort_values(by=['Position', 'Amino Acids'])
 
 # Updated function for generating map with optimized coordinate handling
 def generate_map(df):
     geolocator = Nominatim(user_agent="geoapi")
-
+    @lru_cache(maxsize=1024)
     def get_coordinates(location):
+        location = str(location)
+        
         try:
             loc = geolocator.geocode(location)
             if loc:
@@ -168,13 +175,14 @@ def upload_file():
 
         genbank_ids = list(variable_ids)
         metadata_df = fetch_genbank_metadata(genbank_ids, email, variable_pos_data) if genbank_ids else pd.DataFrame()
+        variable_pos_data_limited = dict(list(variable_pos_data.items())[:10])
 
         if not metadata_df.empty:
             generate_map(metadata_df)
 
 
         date = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")  # Get current UTC date and time
-        return render_template('results.html', conserved=conserved_pos, variable=variable_pos_data, metadata=metadata_df.to_dict(orient="records") , date=date)
+        return render_template('results.html', conserved=conserved_pos, variable= variable_pos_data_limited, metadata=metadata_df.to_dict(orient="records") , date=date)
 
     return redirect(url_for('index'))
 
@@ -255,9 +263,80 @@ def download_metadata():
     csv_filename = f"{os.path.splitext(uploaded_filename)[0]}_metadata.csv"
     
     return send_file(output, as_attachment=True, download_name= csv_filename , mimetype='text/csv')
-        
+
+@app.route('/full_metadata')
+def full_metadata():
+    global metadata_df  # Assuming metadata_df is a global variable holding the data
+    if metadata_df.empty:
+        return "<h3>No Metadata Available</h3>"
+
+    # Drop the 'Coordinates' column from the DataFrame
+    filtered_df = metadata_df.drop(columns=['Coordinates'], errors='ignore')
+
+    # Convert the filtered DataFrame to HTML with Bootstrap table classes for styling
+    table_html = filtered_df.to_html(classes='table table-bordered table-striped', index=False)
+    return f"""
+    <html>
+        <head>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+            <title>Metadata-Complete Table</title>
+        </head>
+        <body>
+            <div class="container mt-4">
+                <h2>Metadata on variable positions</h2>
+                {table_html}
+                <a href="/" class="btn btn-primary mt-3">Back to Home</a>
+            </div>
+        </body>
+    </html>
+    """
+
+@app.route('/full_variable_positions')
+def full_variable_positions():
+    global variable_pos_data  # Accessing the global data
+
+    # Check if data exists
+    if 'variable_pos_data' not in globals() or not variable_pos_data:
+        return "<h3>No Variable Positions Data Available</h3>"
+
+    # Extract only the amino acids from the data (ignoring ids)
+    data = []
+    for position, data_dict in variable_pos_data.items():
+        amino_acids = ", ".join(data_dict['amino_acids'])  # Join the amino acids into a string
+        data.append([position, amino_acids])
+
+    # Convert the data to a DataFrame for display
+    df = pd.DataFrame(data, columns=['Variable Position', 'Variable Amino Acid'])
+
+    # Render as HTML table
+    table_html = df.to_html(
+        classes='table table-striped table-bordered',
+        index=False  # Hide index
+    )
+
+    # Return the formatted HTML page
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+            <title>Variable Positions- Complete Table</title>
+        </head>
+        <body>
+            <div class="container mt-4">
+                <h2 class="mb-4">Variable Positions</h2>
+                {table_html}
+                <a href="/" class="btn btn-primary mt-3">Back to Home</a>
+            </div>
+        </body>
+    </html>
+    """
+
+
+
     
 if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
     app.run(debug=True)
+
