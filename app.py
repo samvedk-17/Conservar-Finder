@@ -40,12 +40,21 @@ def find_conserved_and_variable_pos(input_fasta, omit_missing):
         unique_aa = set(column)
         position = i + 1  # 1-based index
 
+        total_count = len(column)
+        frequencies = {aa:column.count(aa) for aa in unique_aa}
+        percentages = {aa:round((count/total_count)*100 , 1) for aa , count in frequencies.items()}
+
         if len(unique_aa) == 1:
             conserved.append(f"{position}: {column[0]}")
         else:
-            variable[position] = {'amino_acids': unique_aa, 'ids': [record.id for record in filtered_alignment if record.seq[i] in unique_aa]}
+            variable[position] = {
+                'amino_acids': unique_aa,
+                'percentages': percentages,
+                'ids': [record.id for record in filtered_alignment if record.seq[i] in unique_aa]
+            }
+            
 
-    return conserved, variable
+    return conserved, variable , filtered_alignment
 
 # Optimized function for extracting GenBank IDs from sequence headers
 def extract_fasta_ids(fasta_ids):
@@ -163,7 +172,7 @@ def upload_file():
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         uploaded_file.save(file_path)
 
-        conserved_pos, variable_pos_data = find_conserved_and_variable_pos(file_path, omit_missing)
+        conserved_pos, variable_pos_data , filtered_alignment = find_conserved_and_variable_pos(file_path, omit_missing)
         session['uploaded_filename'] = filename
         base_filename = os.path.splitext(filename)[0] 
 
@@ -175,14 +184,29 @@ def upload_file():
 
         genbank_ids = list(variable_ids)
         metadata_df = fetch_genbank_metadata(genbank_ids, email, variable_pos_data) if genbank_ids else pd.DataFrame()
-        variable_pos_data_limited = dict(list(variable_pos_data.items())[:10])
+        
+        variable_pos_data_formatted = {}
+        
+        for position, data in variable_pos_data.items():
+            total_count = len(data['ids'])  # Total number of sequences at this position
+            formatted_aa = []
+            
+            for aa in data['amino_acids']:
+                count = sum(
+                    1 for record in filtered_alignment 
+                    if record.id in data['ids'] and record.seq[position - 1] == aa
+                )
+                percentage = (count / total_count) * 100
+                formatted_aa.append(f"{aa} ({percentage:.1f}%)")
 
+            variable_pos_data_formatted[position] = ", ".join(formatted_aa)
+            
         if not metadata_df.empty:
             generate_map(metadata_df)
 
-
+        variable_pos_data_formatted = dict(list(variable_pos_data.items())[:10])
         date = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")  # Get current UTC date and time
-        return render_template('results.html', conserved=conserved_pos, variable= variable_pos_data_limited, metadata=metadata_df.to_dict(orient="records") , date=date)
+        return render_template('results.html', conserved=conserved_pos, variable= variable_pos_data_formatted, metadata=metadata_df.to_dict(orient="records") , date=date)
 
     return redirect(url_for('index'))
 
@@ -222,7 +246,9 @@ def download_var():
     uploaded_filename = session.get('uploaded_filename', 'results')  # Get uploaded filename or default name    
 
     csv_data = "Variable Position, Variable Amino Acid(s)\n"
-    csv_data += "\n".join([f"{position},\"{', '.join(data['amino_acids'])}\"" for position, data in variable_pos_data.items()])
+    csv_data += "\n".join([f"{position},\"{', '.join([f'{aa}({data['percentages'][aa]:.1f}%)' for aa in data['amino_acids']])}\""
+                           for position, data in variable_pos_data.items()])
+   
     output = io.BytesIO()
     output.write(csv_data.encode('utf-8'))
     output.seek(0)
@@ -293,20 +319,23 @@ def full_metadata():
 
 @app.route('/full_variable_positions')
 def full_variable_positions():
-    global variable_pos_data  # Accessing the global data
+    global variable_pos_data
 
-    # Check if data exists
     if 'variable_pos_data' not in globals() or not variable_pos_data:
         return "<h3>No Variable Positions Data Available</h3>"
 
-    # Extract only the amino acids from the data (ignoring ids)
     data = []
     for position, data_dict in variable_pos_data.items():
-        amino_acids = ", ".join(data_dict['amino_acids'])  # Join the amino acids into a string
-        data.append([position, amino_acids])
+        total = len(data_dict['ids'])
+        amino_acids_with_percentages = ", ".join(
+            f"{aa}({(data_dict['percentages'][aa]):.1f}%)"
+            for aa in data_dict['amino_acids']
+        )
 
-    # Convert the data to a DataFrame for display
-    df = pd.DataFrame(data, columns=['Variable Position', 'Variable Amino Acid'])
+        data.append([position, amino_acids_with_percentages])
+
+
+    df = pd.DataFrame(data, columns=['Variable Position', 'Variable Amino Acid(s) with Percentages'])
 
     # Render as HTML table
     table_html = df.to_html(
@@ -339,4 +368,3 @@ if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
     app.run(debug=True)
-
