@@ -69,7 +69,12 @@
                 {% for position, data in variable.items() %} <!-- Only show top 10 rows -->
                 <tr>
                     <td style="border: 1px solid black; padding: 4px;">{{ position }}</td>
-                    <td style="border: 1px solid black; padding: 4px;">{{ data['amino_acids'] | join(', ') }}</td>
+                    <td style="border: 1px solid black; padding: 4px;">
+                        {% for aa, percent in data['percentages'].items() %}
+                            {{ aa }} ({{ percent }}%)
+                            {% if not loop.last %}, {% endif %}
+                        {% endfor %}   
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
