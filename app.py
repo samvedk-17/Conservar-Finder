@@ -11,6 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 import io
 from datetime import datetime
 from functools import lru_cache
+import csv
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -48,60 +49,107 @@ def find_conserved_and_variable_pos(input_fasta, omit_missing):
             conserved.append(f"{position}: {column[0]}")
         else:
             variable[position] = {
-                'amino_acids': unique_aa,
+                'amino_acids': {aa: freq for aa, freq in percentages.items() if freq <= 50.0},  # Filter
                 'percentages': percentages,
-                'ids': [record.id for record in filtered_alignment if record.seq[i] in unique_aa]
+                'ids': {aa: [
+                    record.id for record in filtered_alignment if record.seq[i] == aa and percentages[aa] <= 50.0
+                ] for aa in unique_aa if percentages[aa] <= 50.0}
             }
             
 
     return conserved, variable , filtered_alignment
 
-# Optimized function for extracting GenBank IDs from sequence headers
-def extract_fasta_ids(fasta_ids):
-    return [entry.split('|')[1].split('_prot_')[0] for entry in fasta_ids]
 
 # Optimized batch metadata fetching function
 def fetch_genbank_metadata(genbank_ids, email, variable_positions):
+    # Validate email
+    if not email:
+        print("Error: No email provided for Entrez API")
+        return pd.DataFrame()
+
     Entrez.email = email
     batch_size = 50
     records_data = []
 
+    print(f"Fetching metadata for {len(genbank_ids)} GenBank IDs")
+
     @lru_cache(maxsize=512)
     def fetch_batch(ids_batch):
         ids_batch = tuple(ids_batch)
-        handle = Entrez.efetch(db="nucleotide", id=','.join(ids_batch), rettype="gb", retmode="text")
-        records = SeqIO.parse(handle, "genbank")
-        data_batch = []
-        
-        for record in records:
-            for feature in record.features:
-                if feature.type == "source":
-                    location = feature.qualifiers.get("geo_loc_name", ["N/A"])[0]
-                    collection_date = feature.qualifiers.get("collection_date", ["N/A"])[0]
-                    strain = feature.qualifiers.get("strain", ["N/A"])[0]
-                    isolate = feature.qualifiers.get("isolate", ["N/A"])[0]
-                    genotype = feature.qualifiers.get("note", ["N/A"])[0]
+        try:
+            handle = Entrez.efetch(db="nucleotide", id=','.join(ids_batch), rettype="gb", retmode="text")
+            records = list(SeqIO.parse(handle, "genbank"))
+            print(f"Fetched {len(records)} records for batch")
+            
+            data_batch = []
+            
+            for record in records:
+                # Extract the base GenBank ID without additional qualifiers
+                base_id = record.id.split('_prot_')[0].split('|')[-1]
+                
+                location = "N/A"
+                collection_date = "N/A"
+                strain = "N/A"
+                isolate = "N/A"
+                genotype = "N/A"
 
-                    for pos, amino_acid_set in variable_positions.items():
-                        for amino_acid in amino_acid_set['amino_acids']:
-                            data_batch.append({
-                                "Position": pos,
-                                "Amino Acids": amino_acid,
-                                "GenBank ID": record.id,
-                                "Collection Date": collection_date,
-                                "Location": location,
-                                "Strain": strain,
-                                "Isolate": isolate,
-                                "Genotype": genotype
-                            })
-        handle.close()
-        return data_batch
+                for feature in record.features:
+                    if feature.type == "source":
+                        location = feature.qualifiers.get("geo_loc_name", ["N/A"])[0]
+                        collection_date = feature.qualifiers.get("collection_date", ["N/A"])[0]
+                        strain = feature.qualifiers.get("strain", ["N/A"])[0]
+                        isolate = feature.qualifiers.get("isolate", ["N/A"])[0]
+                        genotype = feature.qualifiers.get("note", ["N/A"])[0]
+
+                # Debug print
+                print(f"Processing record: {base_id}")
+
+                # Find positions and amino acids for this specific record
+                for pos, aa_data in variable_positions.items():
+                    for aa, percentage in aa_data['percentages'].items():
+                        # Changed condition: include amino acids with percentages less than or equal to 50%
+                        if percentage <= 50.0:
+                            # Check if this record's ID matches any in the IDs for this amino acid
+                            matching_records = [r_id for r_id in aa_data['ids'].get(aa, []) if base_id in r_id]
+                            
+                            if matching_records:
+                                data_batch.append({
+                                    "Position": pos,
+                                    "Amino Acid": aa,
+                                    "Percentage": percentage,
+                                    "GenBank ID": base_id,
+                                    "Collection Date": collection_date,
+                                    "Location": location,
+                                    "Strain": strain,
+                                    "Isolate": isolate,
+                                    "Genotype": genotype
+                                })
+
+            handle.close()
+            return data_batch
+        except Exception as e:
+            print(f"Error fetching metadata: {e}")
+            return []
 
     with ThreadPoolExecutor() as executor:
-        for i in range(0, len(genbank_ids), batch_size):
-            records_data.extend(executor.submit(fetch_batch, tuple(genbank_ids[i:i + batch_size])).result())
+        futures = [executor.submit(fetch_batch, tuple(genbank_ids[i:i + batch_size])) for i in range(0, len(genbank_ids), batch_size)]
+        
+        for future in futures:
+            try:
+                batch_results = future.result()
+                records_data.extend(batch_results)
+            except Exception as e:
+                print(f"Error processing future: {e}")
 
-    return pd.DataFrame(records_data).sort_values(by=['Position', 'Amino Acids'])
+    print(f"Total metadata records fetched: {len(records_data)}")
+    
+    # Convert to DataFrame and add more detailed print statements
+    df = pd.DataFrame(records_data).sort_values(by=['Position', 'Amino Acid']) if records_data else pd.DataFrame()
+    
+    #print("DataFrame Column Names:", list(df.columns))
+    print("DataFrame First Few Rows:\n", df.head())
+    
+    return df
 
 # Updated function for generating map with optimized coordinate handling
 def generate_map(df):
@@ -162,7 +210,8 @@ def upload_file():
     global conserved_pos , variable_pos_data , metadata_df
     conserved_pos = [] 
     variable_pos_data = {}
-    metadata_df = {}
+    metadata_df = pd.DataFrame()
+
     uploaded_file = request.files['file']
     email = request.form['email']
     omit_missing = 'omit_missing' in request.form
@@ -175,16 +224,58 @@ def upload_file():
         conserved_pos, variable_pos_data , filtered_alignment = find_conserved_and_variable_pos(file_path, omit_missing)
         session['uploaded_filename'] = filename
         base_filename = os.path.splitext(filename)[0] 
+        # Debug: Print variable positions data
+        print("Variable Positions Data:")
+        for pos, data in variable_pos_data.items():
+            print(f"Position {pos}:")
+            print(f"  Amino Acids: {data['amino_acids']}")
+            print(f"  Percentages: {data['percentages']}")
+            #print(f"  IDs: {data['ids']}")
 
         variable_ids = set()
-        for position_data in variable_pos_data.values():
-            fasta_ids = position_data['ids']
-            extracted_ids = extract_fasta_ids(fasta_ids)
-            variable_ids.update(extracted_ids)
+        for position, data in variable_pos_data.items():
+            #print(f"\nProcessing Position {position}:")
+            #print(f"Amino Acids: {data['amino_acids']}")
+            #print(f"Percentages: {data['percentages']}")
+         
+            for aa, percentage in data['percentages'].items():
+                if percentage <= 50.0:
+                    ids_for_aa = [
+                        record.id for record in filtered_alignment 
+                        if record.seq[position - 1] == aa
+                    ]
+                    print(f"  Amino Acid {aa} (Percentage: {percentage:.1f}%):")
+                    print(f"  IDs: {ids_for_aa}")
+                    variable_ids.update(ids_for_aa)
+                 
+        print("Collected Variable IDs for metadata fetching:")
+        print(variable_ids)
 
-        genbank_ids = list(variable_ids)
-        metadata_df = fetch_genbank_metadata(genbank_ids, email, variable_pos_data) if genbank_ids else pd.DataFrame()
+        # Fetch metadata
         
+        metadata_df = pd.DataFrame()
+        if variable_ids:
+            clean_ids = []
+            for id_str in variable_ids:
+                if '|' in id_str:
+                    clean_id = id_str.split('_prot_')[0].split('|')[-1]
+                elif '_prot_' in id_str:
+                    clean_id = id_str.split('_prot_')[0]
+                else:
+                    clean_id = id_str
+                clean_ids.append(clean_id)
+
+            # Remove duplicates while preserving order
+            clean_ids = list(dict.fromkeys(clean_ids))
+            metadata_df = fetch_genbank_metadata(clean_ids, email, variable_pos_data)
+            metadata_data = metadata_df.to_dict(orient="records") if not metadata_df.empty else []
+            
+            print("\nMetadata Fetched:")
+            print(metadata_df)
+        else:
+            metadata_data = []
+
+
         variable_pos_data_formatted = {}
         
         for position, data in variable_pos_data.items():
@@ -206,7 +297,7 @@ def upload_file():
 
         variable_pos_data_formatted = dict(list(variable_pos_data.items())[:10])
         date = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")  # Get current UTC date and time
-        return render_template('results.html', conserved=conserved_pos, variable= variable_pos_data_formatted, metadata=metadata_df.to_dict(orient="records") , date=date)
+        return render_template('results.html', conserved=conserved_pos, variable= variable_pos_data_formatted, metadata=metadata_data , date=date)
 
     return redirect(url_for('index'))
 
@@ -246,7 +337,7 @@ def download_var():
     uploaded_filename = session.get('uploaded_filename', 'results')  # Get uploaded filename or default name    
 
     csv_data = "Variable Position, Variable Amino Acid(s)\n"
-    csv_data += "\n".join([f"{position},\"{', '.join([f'{aa}({data['percentages'][aa]:.1f}%)' for aa in data['amino_acids']])}\""
+    csv_data += "\n".join([f"{position},\"{', '.join([f'{aa}({data['percentages'][aa]:.1f}%)' for aa in data['percentages']])}\""
                            for position, data in variable_pos_data.items()])
    
     output = io.BytesIO()
@@ -260,35 +351,44 @@ def download_var():
 
 @app.route('/download_metadata')
 def download_metadata():
-    global variable_pos_data , metadata_df
-    if not variable_pos_data and metadata_df:  # Initialize with empty list if undefined
-        variable_pos_data = {}
-        metadata_df = {}
+    global metadata_df
+    if metadata_df.empty:
+        return "<h3>No Metadata Available</h3>"
 
-    uploaded_filename = session.get('uploaded_filename', 'results')  # Get uploaded filename or default name    
+    output = io.StringIO()
+    csv_writer = csv.writer(output)
 
-    csv_data = "Variable Position, Variable Amino Acid , Genbank id , Collection date , Loaction , Strain , Isolate , Genotype\n"
-    csv_data += "\n".join([
-        f"{data['Position']},\"{(data['Amino Acids'])}\","
-        f"{data['GenBank ID']},"
-        f"{data['Collection Date']},"
-        f"{data['Location']},"
-        f"{data['Strain']},"
-        f"{data['Isolate']},"
-        f"{data['Genotype']}"
-        for data in metadata_df.to_dict(orient='records')  # Convert DataFrame to a list of dictionaries
+    # Write header
+    csv_writer.writerow([
+        "Position", "Variable Amino Acid", "GenBank ID", 
+        "Collection Date", "Location", "Strain", "Isolate", "Genotype"
     ])
-   
 
-    
-    output = io.BytesIO()
-    output.write(csv_data.encode('utf-8'))
+    # Write data rows
+    for _, row in metadata_df.iterrows():
+        csv_writer.writerow([
+            row.get("Position", ""), 
+            row.get("Amino Acid", ""), 
+            row.get("GenBank ID", ""), 
+            row.get("Collection Date", ""), 
+            row.get("Location", ""), 
+            row.get("Strain", ""), 
+            row.get("Isolate", ""), 
+            row.get("Genotype", "")
+        ])
+
+    # Prepare the output for download
     output.seek(0)
-    
-    # Use the uploaded filename to create the CSV name
+    uploaded_filename = session.get('uploaded_filename', 'results')
     csv_filename = f"{os.path.splitext(uploaded_filename)[0]}_metadata.csv"
-    
-    return send_file(output, as_attachment=True, download_name= csv_filename , mimetype='text/csv')
+
+    return send_file(
+        io.BytesIO(output.getvalue().encode('utf-8')),
+        as_attachment=True,
+        download_name=csv_filename,
+        mimetype='text/csv'
+    )
+
 
 @app.route('/full_metadata')
 def full_metadata():
@@ -329,7 +429,7 @@ def full_variable_positions():
         total = len(data_dict['ids'])
         amino_acids_with_percentages = ", ".join(
             f"{aa}({(data_dict['percentages'][aa]):.1f}%)"
-            for aa in data_dict['amino_acids']
+            for aa in data_dict['percentages']
         )
 
         data.append([position, amino_acids_with_percentages])
