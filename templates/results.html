@@ -62,7 +62,7 @@
                 <tr style="background-color: #a4d5f8;">
                     <th style="border: 1px solid black; padding: 4px;">Variable Position</th>
                 
-                    <th style="border: 1px solid black; padding: 4px;">Variable Amino Acid</th>
+                    <th style="border: 1px solid black; padding: 4px;">Variable Amino Acid(s)</th>
                 </tr>
             </thead>
             <tbody>
@@ -73,7 +73,7 @@
                         {% for aa, percent in data['percentages'].items() %}
                             {{ aa }} ({{ percent }}%)
                             {% if not loop.last %}, {% endif %}
-                        {% endfor %}   
+                        {% endfor %}    
                     </td>
                 </tr>
                 {% endfor %}
@@ -121,7 +121,7 @@
         {% for data in metadata[:10] %} <!-- Only show top 10 rows -->
         <tr>
             <td style="border: 1px solid black; padding: 8px;">{{ data['Position'] }}</td>
-            <td style="border: 1px solid black; padding: 8px;">{{ data['Amino Acids'] }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ data['Amino Acid'] }}</td>
             <td style="border: 1px solid black; padding: 8px;">{{ data['GenBank ID'] }}</td>
             <td style="border: 1px solid black; padding: 8px;">{{ data['Collection Date'] }}</td>
             <td style="border: 1px solid black; padding: 8px;">{{ data['Location'] }}</td>
