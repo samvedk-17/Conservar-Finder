@@ -5,6 +5,7 @@
     <h2 style="margin-left: 20px;">Results</h2>
 </div>
 
+<!-- Conserved Positions Section -->
 <div class="d-flex justify-content-between align-items-center my-3">
     <h4 style="margin-left: 20px;">Conserved Positions</h4>
     <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.location.href='/download_consv'">
@@ -15,154 +16,305 @@
     </button>
 </div>
 
-
-    {% if conserved %}
-    <table style="border-collapse: collapse; width: 75%; text-align: center; margin-left: 20px; margin-right: 20px;" >
-        <thead>
-            <tr>
-                <!-- First header row for Conserved Position -->
-                <th style="border: 1px solid black; background-color: #a4d5f8; padding: 4px; width: 100%;">Conserved Position</th>
-                {% for pos in conserved %}
-                    <th style="border: 1px solid black; padding: 8px;">{{ pos.split(':')[0] }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <!-- Second header row for Conserved Amino Acid -->
-                <th style="border: 1px solid black; background-color: #a4d5f8; padding:4px;">Conserved Amino Acid</th>
-                {% for pos in conserved %}
-                    <td style="border: 1px solid black; padding: 4px;">{{ pos.split(':')[1].strip() }}</td>
-                {% endfor %}
-            </tr>
-        </tbody>
-    </table>
-    {% else %}
-        <p style = "margin-left: 20px;">No conserved positions found.</p>
-    {% endif %}
-    
-
-
-    <!-- Display Variable Positions -->
-<div class="d-flex justify-content-between align-items-center my-3">
-        <h4 class="text-left" style="margin-left: 20px;">Variable Positions</h4>  
-       
-            <!-- Existing Download Button -->
-            <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.location.href='/download_var'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
-                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64"/>
-                </svg> 
-                Download
-            </button>
-        
-</div>
-    {% if variable %}
-        <table style="border-collapse: collapse; width: 100%; text-align: center; margin-left: 20px; margin-right: 20px;">
-            <thead>
-                <tr style="background-color: #a4d5f8;">
-                    <th style="border: 1px solid black; padding: 4px;">Variable Position</th>
-                
-                    <th style="border: 1px solid black; padding: 4px;">Variable Amino Acid(s)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for position, data in variable.items() %} <!-- Only show top 10 rows -->
-                <tr>
-                    <td style="border: 1px solid black; padding: 4px;">{{ position }}</td>
-                    <td style="border: 1px solid black; padding: 4px;">
-                        {% for aa, percent in data['percentages'].items() %}
-                            {{ aa }} ({{ percent }}%)
-                            {% if not loop.last %}, {% endif %}
-                        {% endfor %}    
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <div class="d-flex justify-content-between align-items-center my-3" style="margin-left: 20px;">
-            <!-- Button to open full variable positions table in a new window -->
-            <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.open('/full_variable_positions', '_blank')">
-                Open full table in new window
-            </button>
-        </div>    
-    {% else %}
-        <p style = "margin-left: 20px;" >No variable positions found.</p>
-    {% endif %}
-   
-  <!-- Display Metadata for Variable Positions -->
-<div class="d-flex justify-content-between align-items-center my-3">
-    <h4 class="text-left" style="margin-left: 20px;">Metadata for Variable Positions</h4> 
-   
-        <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.location.href='/download_metadata'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
-                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64"/>
-            </svg> 
-            Download
-        </button>
-   
-    
-</div>
-
-{% if metadata %}
-<table style="border-collapse: collapse; width: 100%; text-align: center; margin-left: 20px; margin-right: 20px;">
+{% if conserved %}
+<table table class="table table-bordered table-striped" style="border-collapse: collapse; width: 75%; text-align: center; margin-left: 20px; margin-right: 20px;">
     <thead>
-        <tr style="background-color: #a4d5f8;">
-            <th style="border: 1px solid black; padding: 8px;">Variable Position</th>
-            <th style="border: 1px solid black; padding: 8px;">Variable Amino Acid</th>
-            <th style="border: 1px solid black; padding: 8px;">GenBank ID</th>
-            <th style="border: 1px solid black; padding: 8px;">Collection Date</th>
-            <th style="border: 1px solid black; padding: 8px;">Location</th>
-            <th style="border: 1px solid black; padding: 8px;">Strain</th>
-            <th style="border: 1px solid black; padding: 8px;">Isolate</th>
-            <th style="border: 1px solid black; padding: 8px;">Genotype</th>
+        <tr>
+            <th style="border: 1px solid black; background-color: #a4d5f8; padding: 4px; width: 100%;">Conserved Position</th>
+            {% for pos in conserved %}
+                <th style="border: 1px solid black; padding: 8px;">{{ pos.split(':')[0] }}</th>
+            {% endfor %}
         </tr>
     </thead>
     <tbody>
-        {% for data in metadata[:10] %} <!-- Only show top 10 rows -->
         <tr>
-            <td style="border: 1px solid black; padding: 8px;">{{ data['Position'] }}</td>
-            <td style="border: 1px solid black; padding: 8px;">{{ data['Amino Acid'] }}</td>
-            <td style="border: 1px solid black; padding: 8px;">{{ data['GenBank ID'] }}</td>
-            <td style="border: 1px solid black; padding: 8px;">{{ data['Collection Date'] }}</td>
-            <td style="border: 1px solid black; padding: 8px;">{{ data['Location'] }}</td>
-            <td style="border: 1px solid black; padding: 8px;">{{ data['Strain'] }}</td>
-            <td style="border: 1px solid black; padding: 8px;">{{ data['Isolate'] }}</td>
-            <td style="border: 1px solid black; padding: 8px;">{{ data['Genotype'] }}</td>
+            <th style="border: 1px solid black; background-color: #a4d5f8; padding:4px;">Conserved Amino Acid</th>
+            {% for pos in conserved %}
+                <td style="border: 1px solid black; padding: 4px;">{{ pos.split(':')[1].strip() }}</td>
+            {% endfor %}
+        </tr>
+    </tbody>
+</table>
+{% else %}
+    <p style="margin-left: 20px;">No conserved positions found.</p>
+{% endif %}
+
+<!-- Variable Positions Section -->
+<div class="d-flex justify-content-between align-items-center my-3">
+    <h4 class="text-left" style="margin-left: 20px;">Variable Positions</h4>
+    <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.location.href='/download_var'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64"/>
+        </svg> 
+        Download
+    </button>
+</div>
+
+{% if variable %}
+<table class="table table-bordered table-striped" style="border-collapse: collapse; width: 100%; text-align: center; margin-left: 20px; margin-right: 20px;">
+    <thead>
+        <tr>
+            <th style="background-color: #a4d5f8;">Variable Position</th>
+            <th style="background-color: #a4d5f8;">Reference AA</th>
+            <th style="background-color: #a4d5f8;">Variable Amino Acid(s)</th>
+            <th style="background-color: #a4d5f8;">Mutations</th>
+            <th style="background-color: #a4d5f8;">Frequency</th>
+            <th style="background-color: #a4d5f8;">GenBank IDs</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for position, data in (variable.items()|sort)[:10] %}
+        <tr>
+            <td>{{ position }}</td>
+            <td>{{ data.ref_aa }}</td>
+            <td>
+                {% for var in data.variations.split(', ') %}
+                    {% if not var.startswith(data.ref_aa) %}
+                        {{ var }}{% if not loop.last %}, {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{ data.mutations|join(', ') }}</td>
+            <td>
+                {% for aa, freq in data.frequencies.items() %}
+                    {{ aa }}:{{ freq }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                {% for aa, ids in data.genbank_ids.items() %}
+                    {% set id_list = ids.split(',') %}
+                    <div class="mb-1">
+                        <span class="badge bg-primary" style="min-width: 30px;">{{ aa }}</span>
+                        {% if id_list|length < 3 %}
+                            {% for id in id_list %}
+                                <a href="https://www.ncbi.nlm.nih.gov/nuccore/{{ id | trim }}" 
+                                   class="badge bg-light text-dark border" 
+                                   target="_blank" 
+                                   style="text-decoration: none;">
+                                    {{ id | trim }}
+                                </a>
+                            {% endfor %}
+                        {% else %}
+                            <a href="https://www.ncbi.nlm.nih.gov/nuccore/{{ id_list[0] | trim }}" 
+                               class="badge bg-light text-dark border" 
+                               target="_blank" 
+                               style="text-decoration: none;">
+                                {{ id_list[0] | trim }}
+                            </a>
+                            <a href="javascript:void(0)" 
+                               class="badge bg-secondary text-white" 
+                               onclick="toggleIds('ids-{{ position }}-{{ aa }}')" 
+                               id="toggle-{{ position }}-{{ aa }}">
+                                +{{ id_list|length - 1 }} more
+                            </a>
+                            <div id="ids-{{ position }}-{{ aa }}" style="display: none; margin-top: 5px;" class="ms-4">
+                                {% for id in id_list[1:] %}
+                                    <div>
+                                        <a href="https://www.ncbi.nlm.nih.gov/nuccore/{{ id | trim }}" 
+                                           target="_blank" 
+                                           class="badge bg-light text-dark border mb-1" 
+                                           style="text-decoration: none;">
+                                            {{ id | trim }}
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                                <button class="btn btn-sm btn-outline-secondary mt-1" 
+                                        onclick="copyIds('{{ id_list|join(',') }}')">
+                                    <i class="bi bi-clipboard"></i> Copy all
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<!-- JavaScript for toggling ID visibility and copying to clipboard -->
+<script>
+    // First, let's initialize data attributes for all toggle buttons when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleButtons = document.querySelectorAll('[id^="toggle-"]');
+        toggleButtons.forEach(btn => {
+            const countMatch = btn.textContent.match(/\+(\d+) more/);
+            if (countMatch && countMatch[1]) {
+                btn.setAttribute('data-count', countMatch[1]);
+            }
+        });
+    });
+    
+    function toggleIds(elemId) {
+        const elem = document.getElementById(elemId);
+        const toggleBtn = document.getElementById('toggle-' + elemId.substring(4));
+        
+        if (elem.style.display === 'none') {
+            // Showing more
+            elem.style.display = 'block';
+            toggleBtn.textContent = 'Show less';
+            toggleBtn.classList.remove('bg-secondary');
+            toggleBtn.classList.add('bg-info');
+        } else {
+            // Hiding (showing less)
+            elem.style.display = 'none';
+            
+            // Get the original count value from data attribute
+            const count = toggleBtn.getAttribute('data-count') || '0';
+            toggleBtn.textContent = '+' + count + ' more';
+            
+            toggleBtn.classList.remove('bg-info');
+            toggleBtn.classList.add('bg-secondary');
+        }
+    }
+    
+    function copyIds(idString) {
+        navigator.clipboard.writeText(idString).then(() => {
+            // Show a temporary notification
+            const notification = document.createElement('div');
+            notification.textContent = 'Copied to clipboard!';
+            notification.className = 'position-fixed top-0 end-0 p-3 bg-success text-white rounded';
+            notification.style.zIndex = '1050';
+            document.body.appendChild(notification);
+            
+            // Remove notification after 2 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 2000);
+        });
+    }
+    </script>
+
 <div class="d-flex justify-content-between align-items-center my-3" style="margin-left: 20px;">
-    <!-- Button to open full metadata in a new window -->
-    <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.open('/full_metadata', '_blank')">
+    <button type="button" class="btn btn-success btn-sm" onclick="window.open('/full_variable_positions', '_blank')">
         Open full table in new window
     </button>
-</div>     
+</div>
 {% else %}
-<p style="margin-left: 20px;">No Metadata Available.</p>
+<p style="margin-left: 20px;">No variable positions found.</p>
 {% endif %}
 
-<!-- Display Interactive Map -->
+<!-- Metadata Section -->
 <div class="d-flex justify-content-between align-items-center my-3">
-    <h4 class="text-left" style="margin-left: 40px;">Geographic Map of Variable Positions</h4>
+    <h4 class="text-left" style="margin-left: 20px;">Metadata for Variable Positions</h4>
+    <button type="button" class="btn btn-success btn-sm" style="margin-right: 20px;" onclick="window.location.href='/download_metadata'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64"/>
+        </svg> 
+        Download
+    </button>
 </div>
-<div class="container my-3 text-center" style="margin-left: 20px;">
+
+{% if metadata %}
+<div class="container-fluid px-4">
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="background-color: #a4d5f8;">Position</th>
+                    <th style="background-color: #a4d5f8;">Reference AA</th>
+                    <th style="background-color: #a4d5f8;">Variant AA</th>
+                    <th style="background-color: #a4d5f8;">Mutation</th>
+                    <th style="background-color: #a4d5f8;">GenBank ID</th>
+                    <th style="background-color: #a4d5f8;">Collection Date</th>
+                    <th style="background-color: #a4d5f8;">Location</th>
+                    <th style="background-color: #a4d5f8;">Strain</th>
+                    <th style="background-color: #a4d5f8;">Isolate</th>
+                    <th style="background-color: #a4d5f8;">Genotype</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in (metadata|sort(attribute='Position'))[:10] %}
+                <tr>
+                    <td>{{ entry.Position }}</td>
+                    <td>{{ entry['Reference AA'] }}</td>
+                    <td>{{ entry['Variant AA'] }}</td>
+                    <td>{{ entry.Mutation }}</td>
+                    <td>{{ entry['GenBank ID'] }}</td>
+                    <td>{{ entry['Collection Date'] }}</td>
+                    <td>{{ entry.Location }}</td>
+                    <td>{{ entry.Strain }}</td>
+                    <td>{{ entry.Isolate }}</td>
+                    <td>{{ entry.Genotype }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center my-3" style="margin-left: 20px;">
+    <div>
+        <button type="button" class="btn btn-success btn-sm" onclick="window.open('/full_metadata', '_blank')">
+            Open full table in new window
+        </button>
+        <button type="button" class="btn btn-success btn-sm" onclick="window.open('/genbank_cluster', '_blank')">
+            Visualize GenBank ID Frequency Distribution
+        </button>
+    </div>
+</div>
+{% else %}
+    <p style="margin-left: 20px;">No Metadata Available.</p>
+{% endif %}
+
+<!-- Geographic Map Section -->
+<div class="d-flex justify-content-between align-items-center my-3">
+    <h4 class="text-left" style="margin-left: 20px;">Geographic Map of Variable Positions</h4>
+</div>
+<div class="container-fluid my-3">
     {% if metadata and metadata|length > 0 %}
-        <iframe src="{{ url_for('static', filename='map.html') }}" width="100%" height="400px" style="display: block; margin-left: 20px;"></iframe>
+        <div style="width: 95%; height: 400px; margin: 0 auto;">
+            <iframe src="{{ url_for('static', filename='map.html') }}" 
+                    style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+        
+        <div style="text-align: center;">
+            <p style="color: gray; opacity: 0.7; font-style: italic;">
+                Click on the location pins to visualize additional information about GenBank IDs.
+            </p>
+        </div>
+        
     {% else %}
-    <p style="margin-left: 20px;">Can't display any locations.</p>
+        <p style="margin-left: 20px;">Can't display any locations.</p>
     {% endif %}
 </div>
 
-    <!-- Upload Another File -->
-    <div class="container my-3 text-center" style= "margin-left: 20px;"></div>
-    <a href="{{ url_for('index') }}" style = "margin-left: 20px;" >Upload Another File</a> 
+<!-- Process Timing Information -->
+{% if timing %}
+<div class="container my-3">
+    <h4 style="margin-left: 20px;">Process Timing</h4>
+    <table style="border-collapse: collapse; width: 50%; margin-left: 20px;">
+        <thead>
+            <tr style="background-color: #a4d5f8;">
+                <th style="border: 1px solid black; padding: 8px;">Step</th>
+                <th style="border: 1px solid black; padding: 8px;">Time (seconds)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for step, time in timing %}
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;">{{ step }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ "%.2f"|format(time) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- Upload Another File -->
+<div class="container my-3" style="margin-left: 20px;">
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Upload Another File</a>
+</div>
+
+{% if variable %}
+<div class="alert alert-info" role="alert" style="margin: 20px;">
+    Note: Analysis {% if request.form.get('omit_missing') %}excludes{% else %}includes{% endif %} positions with gaps (-) and missing data (X).
+</div>
+{% endif %}
 
 <footer style="text-align: center; margin-top: 20px;">
     <p>UTC - {{ date }}</p>
-</footer>    
+</footer>
 
 {% endblock body %}
-
-
-
