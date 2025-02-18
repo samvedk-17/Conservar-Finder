@@ -22,6 +22,8 @@ Conservar Finder analyzes aligned FASTA files to identify conserved and variable
 **2. Variable positions table:** 
 ![variable_pos_table](https://github.com/user-attachments/assets/b3572d4b-3a8d-4548-a321-bb2033218136)
 
+![csv_down](https://github.com/user-attachments/assets/67d92bd1-c247-4a89-8389-5ccfff119abd)
+
 **3. Metadata table:**
 ![metadata_table](https://github.com/user-attachments/assets/378ae1cd-67a9-45a6-8603-158157311684)
 
