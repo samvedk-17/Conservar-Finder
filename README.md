@@ -1,6 +1,6 @@
 **How Conservar Finder Works?**
 
-Conservar Finder analyzes aligned FASTA files to identify conserved and variable regions in protein or nucleotide sequences. By examining each column of the alignment relative to the **Reference ID**, the tool classifies positions as **Conserved** (if all amino acids or nucleotides in a column are identical) or **Variable** (if differences exist). Once variable positions are identified, GenBank IDs associated with these variations are retrieved from the uploaded FASTA file. For example, if Tryptophan (W) in the reference sequence is replaced by Valine (V) at position 39, Conservar Finder finds the GenBank IDs containing this variation and fetches real-time metadata from **Entrez**, including **Date of Collection, Location, Strain, Isolate, and Genotype**. The tool also calculates the frequency and percentage occurrence of each mutation. Results are displayed in a clear tabular format, showing conserved and variable positions alongside respective amino acids or nucleotides, frequency percentages, GenBank IDs, and additional metadata, all of which can be downloaded in .csv format. To enhance visualization, Conservar Finder also maps the geographic origins of sequence variations on a global map and a GenBank ID-wise variation distribution plot can also be generated.
+Conservar Finder analyzes aligned FASTA files to identify conserved and variable regions in protein or nucleotide sequences. By examining each column of the alignment relative to the **Reference ID**, the tool classifies positions as **Conserved** (if all amino acids or nucleotides in a column are identical) or **Variable** (if differences exist). Once variable positions are identified, GenBank IDs associated with these variations are retrieved from the uploaded FASTA file. For example, if Tryptophan (W) in the reference sequence is replaced by Valine (V) at position 39, Conservar Finder finds the GenBank IDs containing this variation and fetches real-time metadata from [**Entrez**] (https://www.ncbi.nlm.nih.gov/Web/Search/entrezfs.html), including **Date of Collection, Location, Strain, Isolate, and Genotype**. The tool also calculates the frequency and percentage occurrence of each mutation. Results are displayed in a clear tabular format, showing conserved and variable positions alongside respective amino acids or nucleotides, frequency percentages, GenBank IDs, and additional metadata, all of which can be downloaded in .csv format. To enhance visualization, Conservar Finder also maps the geographic origins of sequence variations on a global map and a GenBank ID-wise variation distribution plot can also be generated.
 
 ![Input-hz](https://github.com/user-attachments/assets/5a583718-defd-4c45-84f9-df7286df027f)
 
@@ -15,6 +15,7 @@ Conservar Finder analyzes aligned FASTA files to identify conserved and variable
 ![GUI](https://github.com/user-attachments/assets/4fcfc0c1-285f-45a9-811c-106ded57a82e)
 
 **Results**
+
 **1. Conserved positions table (Reference GenBank ID: AF266290.1):** 
 ![consv_table](https://github.com/user-attachments/assets/3b767177-452e-467e-bdef-f7e9dc78d506)
 **2. Variable positions table:** 
