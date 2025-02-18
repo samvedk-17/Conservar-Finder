@@ -18,12 +18,16 @@ Conservar Finder analyzes aligned FASTA files to identify conserved and variable
 
 **1. Conserved positions table (Reference GenBank ID: AF266290.1):** 
 ![consv_table](https://github.com/user-attachments/assets/3b767177-452e-467e-bdef-f7e9dc78d506)
+
 **2. Variable positions table:** 
 ![variable_pos_table](https://github.com/user-attachments/assets/b3572d4b-3a8d-4548-a321-bb2033218136)
+
 **3. Metadata table:**
 ![metadata_table](https://github.com/user-attachments/assets/378ae1cd-67a9-45a6-8603-158157311684)
+
 **4.Geographic Map of Variable Positions:**
 ![maps](https://github.com/user-attachments/assets/a84f4a04-77cf-43c6-bd1e-8223efbed9a2)
+
 **5. GenBank ID Variation Distribution:**
 ![genbank_var_plot](https://github.com/user-attachments/assets/31e809b5-134b-48eb-a9d9-a4b1fb33e441)
 
