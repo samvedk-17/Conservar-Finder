@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 {% block body %}
-    <div class="container my-5">
+    <div class="container mt-4">
         <div class="row">
-            <!-- Column for the image -->
-            <div class="col-md-3 d-flex justify-content-center align-items-center">
-                <img src="{{ url_for('static', filename='Input-vl.png') }}" alt="Conservar Finder Workflow" class="img-fluid" style="max-width: 450%; height:auto ;  margin-bottom: -20px;">
+            <!-- Column for the workflow image -->
+            <div class="col-md-4 d-flex flex-column align-items-center">
+                <img src="{{ url_for('static', filename='Input-vl.png') }}" 
+                     alt="Conservar Finder Workflow" 
+                     class="img-fluid" 
+                     style="max-width: 500px; height: auto;">
             </div>
             
             <!-- Column for the form -->
@@ -23,6 +26,11 @@
                         <label for="omit_missing">Omit sequences with missing data(X) or gaps(-)</label>
                         <input type="checkbox" id="omit_missing" name="omit_missing">
                     </div>
+                    <div class="form-group">
+                        <label for="ref_seq_id">Reference Sequence GenBank ID:</label>
+                        <input type="text" class="form-control" id="ref_seq_id" name="ref_seq_id" required 
+                               placeholder="Enter the ID of the reference sequence to compare against">
+                    </div>
                     <div class="mb-3">
                         <label for="email">Enter your email (required for <a href="https://www.ncbi.nlm.nih.gov/Web/Search/entrezfs.html">Entrez Retrieval System</a>):</label>
                         <div class="mb-3"></div>
@@ -35,7 +43,6 @@
                     </div>
 
                     <div class="mb-3"><h6><em>Developed by - Samved Kulkarni</em></h6></div>
-                
                 </form>
             </div>
         </div>
