@@ -447,6 +447,25 @@ def download_variable():
         as_attachment=True,
         download_name=csv_filename
     )
+
+@app.route('/download_metadata')
+def download_metadata():
+    if global_state.metadata_df.empty:
+        return "<h3>No metadata available</h3>", 404
+        
+    output = io.StringIO()
+    metadata_df = global_state.metadata_df.copy()
+    metadata_df.to_csv(output, index=False)
+    output.seek(0)
+    
+    csv_filename = f"{os.path.splitext(global_state.uploaded_filename)[0]}_metadata.csv"
+    
+    return send_file(
+        io.BytesIO(output.getvalue().encode('utf-8')),
+        mimetype='text/csv',
+        as_attachment=True,
+        download_name=csv_filename
+    )
     
 @app.route('/full_variable_positions')
 def full_variable_positions():
@@ -491,6 +510,7 @@ def full_variable_positions():
         <html>
             <head>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+                <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo-2.png') }}">
                 <title>Variable Positions - Complete Table</title>
                 <style>
                     .table { margin: 20px; }
@@ -546,6 +566,7 @@ def full_metadata():
         <html>
             <head>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+                <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo-2.png') }}">
                 <title>Metadata - Complete Table</title>
                 <style>
                     .table { margin: 20px; }
@@ -649,6 +670,7 @@ def genbank_cluster():
             <head>
                 <title>GenBank ID Cluster Plot</title>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+                <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo-2.png') }}">
                 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
             </head>
             <body>
