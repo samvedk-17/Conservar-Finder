@@ -12,7 +12,7 @@ Conservar Finder analyzes aligned FASTA files to identify conserved and variable
 5. You can also download results in .csv format.
 
 **User Interface:**
-![GUI](https://github.com/user-attachments/assets/4fcfc0c1-285f-45a9-811c-106ded57a82e)
+![image](https://github.com/user-attachments/assets/f495f7bc-223c-4e31-802b-b6e112619a83)
 
 **Results**
 
