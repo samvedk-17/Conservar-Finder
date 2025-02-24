@@ -47,4 +47,20 @@
             </div>
         </div>
     </div>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            // Show loading screen in an iframe
+            const loadingFrame = document.createElement('iframe');
+            loadingFrame.src = "{{ url_for('loading') }}";
+            loadingFrame.style.position = 'fixed';
+            loadingFrame.style.top = '0';
+            loadingFrame.style.left = '0';
+            loadingFrame.style.width = '100%';
+            loadingFrame.style.height = '100%';
+            loadingFrame.style.border = 'none';
+            loadingFrame.style.zIndex = '9999';
+            document.body.appendChild(loadingFrame);
+        });
+        </script>
+
 {% endblock body %}
