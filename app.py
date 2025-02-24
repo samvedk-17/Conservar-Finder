@@ -384,6 +384,10 @@ def upload_file():
 def about():
     return render_template('about.html')
 
+@app.route('/loading')
+def loading():
+    return render_template('loading-1.html')
+
 @app.route('/Contact')
 def contact():
     return render_template('contact.html')
