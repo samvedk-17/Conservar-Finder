@@ -34,8 +34,8 @@ Conservar Finder analyzes aligned FASTA files to identify conserved and variable
 ![genbank_var_plot](https://github.com/user-attachments/assets/31e809b5-134b-48eb-a9d9-a4b1fb33e441)
 
 **Demonstration Video:**
+https://github.com/user-attachments/assets/690fc48c-50c2-4589-abb1-9b1f42ad9d54
 
-https://github.com/user-attachments/assets/9709428a-185e-49de-bcd0-518c13793f82
 
 
 
