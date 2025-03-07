@@ -702,5 +702,5 @@ def genbank_cluster():
     """, plot_html=fig.to_html(full_html=False))
 if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
+        os.makedirs(UPLOAD_FOLDER , exist_ok=True)
     app.run(debug=False)
