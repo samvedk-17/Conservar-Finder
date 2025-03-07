@@ -16,10 +16,11 @@ from collections import Counter, defaultdict
 import csv
 import time
 import plotly.graph_objects as go
+import tempfile
 
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', os.path.join(tempfile.gettempdir(), 'uploads'))
 app.secret_key = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -296,7 +297,7 @@ def format_variable_positions(variable_pos_data):
 
     return formatted_data
         
-                               
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -315,6 +316,7 @@ def upload_file():
 
         if uploaded_file.filename and email and ref_seq_id:
             filename = secure_filename(uploaded_file.filename)
+            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             uploaded_file.save(file_path)
             global_state.uploaded_filename = filename
@@ -701,6 +703,5 @@ def genbank_cluster():
         </html>
     """, plot_html=fig.to_html(full_html=False))
 if __name__ == '__main__':
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER , exist_ok=True)
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     app.run(debug=False)
